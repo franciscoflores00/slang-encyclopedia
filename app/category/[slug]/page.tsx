@@ -1,13 +1,47 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getCategoryBySlug, getTermsByCategorySlug } from '@/lib/api'
+import { getCategoryBySlug, getTermsByCategorySlug, getAllCategories } from '@/lib/api'
 import { TermWithCategories } from '@/types'
 import SearchBar from '@/components/SearchBar'
+import { Metadata } from 'next'
 
 interface CategoryPageProps {
   params: Promise<{
     slug: string
   }>
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { slug } = await params
+  const category = await getCategoryBySlug(slug)
+  
+  if (!category) {
+    return {
+      title: 'Category Not Found - Hobbipedia',
+      description: 'The requested hobby category was not found.'
+    }
+  }
+
+  return {
+    title: `${category.name} Dictionary - Hobbipedia`,
+    description: category.description || `Explore terminology and vocabulary for ${category.name}. Learn the specialized language used by ${category.name.toLowerCase()} enthusiasts and professionals.`,
+    keywords: `${category.name}, ${category.name.toLowerCase()} terms, ${category.name.toLowerCase()} vocabulary, ${category.name.toLowerCase()} dictionary, hobby terminology`,
+    openGraph: {
+      title: `${category.name} Dictionary - Hobbipedia`,
+      description: category.description || `Comprehensive ${category.name.toLowerCase()} terminology and vocabulary guide`,
+      type: 'website',
+    }
+  }
+}
+
+// Generate static params for all categories (enables static generation)
+export async function generateStaticParams() {
+  const categories = await getAllCategories()
+  
+  return categories.map((category) => ({
+    slug: category.slug
+  }))
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
@@ -16,6 +50,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   // Fetch category and its terms from database
   const category = await getCategoryBySlug(slug)
   const terms = await getTermsByCategorySlug(slug)
+  const allCategories = await getAllCategories()
   
   if (!category) {
     notFound()
@@ -34,6 +69,35 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   // Sort letters alphabetically
   const letters = Object.keys(termsByLetter).sort()
   const totalTerms = terms.length
+
+  // Calculate statistics
+  const difficultyStats = {
+    beginner: terms.filter(t => t.difficulty === 'beginner').length,
+    intermediate: terms.filter(t => t.difficulty === 'intermediate').length,
+    advanced: terms.filter(t => t.difficulty === 'advanced').length
+  }
+
+  // Get popular terms (most viewed)
+  const popularTerms = terms
+    .sort((a, b) => (b.view_count || 0) - (a.view_count || 0))
+    .slice(0, 6)
+
+  // Get recent terms (most recently added)
+  const recentTerms = terms
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 4)
+
+  // Get related categories (exclude current)
+  const relatedCategories = allCategories
+    .filter(cat => cat.slug !== category.slug)
+    .slice(0, 5)
+
+  // Example learning resources (these could be stored in the database)
+  const learningResources = [
+    { type: 'beginner', title: `Getting Started with ${category.name}`, description: 'Essential terms every beginner should know' },
+    { type: 'intermediate', title: `Advanced ${category.name} Concepts`, description: 'Take your knowledge to the next level' },
+    { type: 'reference', title: `${category.name} Quick Reference`, description: 'Common terms and definitions at a glance' }
+  ]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
@@ -56,69 +120,209 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <SearchBar />
         </div>
 
-        {/* Category Header */}
+        {/* Hero Section with Category Header */}
         <div className="max-w-6xl mx-auto mb-8">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-            {/* Header Section */}
-            <div className="text-center p-8 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                {category.emoji && (
-                  <span className="text-5xl">{category.emoji}</span>
-                )}
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {category.name}
-                </h1>
-              </div>
-              {category.description && (
-                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-4">
-                  {category.description}
-                </p>
-              )}
-              <div className="flex justify-center gap-6 text-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+            {/* Gradient Header with Category Color */}
+            <div 
+              className="relative h-48 bg-gradient-to-r from-blue-600 to-indigo-600"
+              style={{
+                background: category.color 
+                  ? `linear-gradient(135deg, ${category.color}dd, ${category.color}99)`
+                  : 'linear-gradient(135deg, #3b82f6, #8b5cf6)'
+              }}
+            >
+              <div className="absolute inset-0 bg-black opacity-20"></div>
+              <div className="relative h-full flex items-center justify-center">
                 <div className="text-center">
-                  <div className="font-bold text-2xl text-blue-600 dark:text-blue-400">{totalTerms}</div>
-                  <div className="text-gray-500 dark:text-gray-400">{totalTerms === 1 ? 'Term' : 'Terms'}</div>
-                </div>
-                <div className="text-center">
-                  <div className="font-bold text-2xl text-green-600 dark:text-green-400">
-                    {terms.filter(t => t.difficulty === 'beginner').length}
-                  </div>
-                  <div className="text-gray-500 dark:text-gray-400">Beginner</div>
-                </div>
-                <div className="text-center">
-                  <div className="font-bold text-2xl text-yellow-600 dark:text-yellow-400">
-                    {terms.filter(t => t.difficulty === 'intermediate').length}
-                  </div>
-                  <div className="text-gray-500 dark:text-gray-400">Intermediate</div>
-                </div>
-                <div className="text-center">
-                  <div className="font-bold text-2xl text-red-600 dark:text-red-400">
-                    {terms.filter(t => t.difficulty === 'advanced').length}
-                  </div>
-                  <div className="text-gray-500 dark:text-gray-400">Advanced</div>
+                  {category.emoji && (
+                    <div className="text-6xl mb-3 animate-bounce">{category.emoji}</div>
+                  )}
+                  <h1 className="text-4xl font-bold text-white drop-shadow-lg">
+                    {category.name}
+                  </h1>
                 </div>
               </div>
             </div>
-            
-            {/* History Section */}
-            {category.history && (
-              <div className="p-8">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                  📚 History & Background
-                </h2>
-                <div className="prose prose-gray dark:prose-invert max-w-none">
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {category.history}
-                  </p>
+
+            {/* Category Description and Stats */}
+            <div className="p-8">
+              {category.description && (
+                <p className="text-lg text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto mb-6">
+                  {category.description}
+                </p>
+              )}
+              
+              {/* Statistics Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-4 text-center">
+                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{totalTerms}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Total Terms</div>
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-4 text-center">
+                  <div className="text-3xl font-bold text-green-600 dark:text-green-400">{difficultyStats.beginner}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Beginner</div>
+                </div>
+                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-lg p-4 text-center">
+                  <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{difficultyStats.intermediate}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Intermediate</div>
+                </div>
+                <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-lg p-4 text-center">
+                  <div className="text-3xl font-bold text-red-600 dark:text-red-400">{difficultyStats.advanced}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Advanced</div>
                 </div>
               </div>
-            )}
+            </div>
+          </div>
+        </div>
+
+        {/* History & Background Section */}
+        {category.history && (
+          <div className="max-w-6xl mx-auto mb-8">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+              <div className="flex items-center mb-6">
+                <span className="text-3xl mr-3">📚</span>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  History & Background
+                </h2>
+              </div>
+              <div className="prose prose-lg prose-gray dark:prose-invert max-w-none">
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                  {category.history}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Two Column Layout for Popular and Recent Terms */}
+        <div className="max-w-6xl mx-auto mb-8 grid lg:grid-cols-2 gap-6">
+          {/* Popular Terms */}
+          {popularTerms.length > 0 && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+                  <span className="text-2xl mr-2">🔥</span> Most Popular Terms
+                </h2>
+                <span className="text-sm text-gray-500 dark:text-gray-400">By views</span>
+              </div>
+              <div className="space-y-3">
+                {popularTerms.map((term, index) => (
+                  <Link
+                    key={term.id}
+                    href={`/term/${term.slug || term.id}`}
+                    className="block p-3 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/10 dark:to-red-900/10 rounded-lg hover:shadow-md transition-all border border-orange-200 dark:border-orange-800"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-bold text-orange-600 dark:text-orange-400">
+                            #{index + 1}
+                          </span>
+                          <span className="font-semibold text-gray-900 dark:text-white">
+                            {term.name}
+                          </span>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            term.difficulty === 'beginner' 
+                              ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                              : term.difficulty === 'intermediate'
+                              ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'
+                              : 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
+                          }`}>
+                            {term.difficulty}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-1">
+                          {term.definition}
+                        </p>
+                      </div>
+                      {term.view_count && (
+                        <div className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                          {term.view_count} views
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Recently Added Terms */}
+          {recentTerms.length > 0 && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+                  <span className="text-2xl mr-2">✨</span> Recently Added
+                </h2>
+                <span className="text-sm text-gray-500 dark:text-gray-400">Latest terms</span>
+              </div>
+              <div className="space-y-3">
+                {recentTerms.map((term) => (
+                  <Link
+                    key={term.id}
+                    href={`/term/${term.slug || term.id}`}
+                    className="block p-3 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/10 dark:to-pink-900/10 rounded-lg hover:shadow-md transition-all border border-purple-200 dark:border-purple-800"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
+                            NEW
+                          </span>
+                          <span className="font-semibold text-gray-900 dark:text-white">
+                            {term.name}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                          {term.definition}
+                        </p>
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                        {new Date(term.created_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Learning Resources Section */}
+        <div className="max-w-6xl mx-auto mb-8">
+          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+              <span className="text-3xl mr-3">🎓</span> Learning Resources
+            </h2>
+            <div className="grid md:grid-cols-3 gap-4">
+              {learningResources.map((resource, index) => (
+                <div key={index} className="bg-white dark:bg-gray-800 rounded-lg p-4 hover:shadow-md transition-all">
+                  <div className="flex items-start">
+                    <span className="text-2xl mr-3">
+                      {resource.type === 'beginner' ? '🌱' : resource.type === 'intermediate' ? '🚀' : '📋'}
+                    </span>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                        {resource.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {resource.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Alphabetical Index Navigation */}
         <div className="max-w-6xl mx-auto mb-8">
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">
+              Quick Navigation
+            </h3>
             <div className="flex flex-wrap justify-center gap-1">
               {Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ').map((letter) => {
                 const hasTerms = termsByLetter[letter] && termsByLetter[letter].length > 0
@@ -126,13 +330,16 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                   <a
                     key={letter}
                     href={hasTerms ? `#letter-${letter}` : undefined}
-                    className={`w-10 h-10 flex items-center justify-center text-sm font-semibold rounded transition-colors ${
+                    className={`w-10 h-10 flex items-center justify-center text-sm font-semibold rounded-lg transition-all ${
                       hasTerms 
-                        ? 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-pointer'
-                        : 'text-gray-400 dark:text-gray-600 cursor-default'
+                        ? 'text-white bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 cursor-pointer shadow-sm hover:shadow-md transform hover:-translate-y-0.5'
+                        : 'text-gray-400 dark:text-gray-600 bg-gray-100 dark:bg-gray-700 cursor-default'
                     }`}
                   >
                     {letter}
+                    {hasTerms && (
+                      <span className="sr-only">({termsByLetter[letter].length} terms)</span>
+                    )}
                   </a>
                 )
               })}
@@ -140,92 +347,55 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           </div>
         </div>
 
-        {/* Popular Terms Section */}
-        {terms.length > 0 && (
-          <div className="max-w-6xl mx-auto mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                🔥 Popular Terms in {category.name}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {terms
-                  .sort((a, b) => (b.view_count || 0) - (a.view_count || 0))
-                  .slice(0, 6)
-                  .map((term) => (
-                    <Link
-                      key={term.id}
-                      href={`/term/${term.slug || term.id}`}
-                      className="block p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg hover:shadow-md transition-all border border-blue-200 dark:border-blue-700"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="font-semibold text-blue-600 dark:text-blue-400">
-                          {term.name}
-                        </div>
-                        {term.view_count && (
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {term.view_count} views
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                        {term.definition}
-                      </p>
-                    </Link>
-                  ))}
-              </div>
-            </div>
+        {/* Complete Dictionary Section */}
+        <div id="dictionary" className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center justify-center">
+              <span className="text-4xl mr-3">📚</span> 
+              Complete {category.name} Dictionary
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">
+              {totalTerms} terms organized alphabetically
+            </p>
           </div>
-        )}
 
-        {/* Terms Dictionary Header */}
-        <div className="max-w-6xl mx-auto mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center">
-            📚 Complete {category.name} Dictionary
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300 text-center mt-2">
-            Browse all terms alphabetically
-          </p>
-        </div>
-
-        {/* Terms by Letter */}
-        {terms.length > 0 ? (
-          <div className="max-w-6xl mx-auto space-y-6">
-            {letters.map((letter) => (
-              <div key={letter} id={`letter-${letter}`} className="scroll-mt-20">
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-lg">
-                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-2xl font-bold">{letter}</h3>
-                      <span className="text-blue-100">
+          {/* Terms by Letter */}
+          {terms.length > 0 ? (
+            <div className="space-y-6">
+              {letters.map((letter) => (
+                <div key={letter} id={`letter-${letter}`} className="scroll-mt-20">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 flex items-center justify-between">
+                      <h3 className="text-2xl font-bold text-white">Letter {letter}</h3>
+                      <span className="text-blue-100 bg-blue-700/30 px-3 py-1 rounded-full text-sm">
                         {termsByLetter[letter].length} {termsByLetter[letter].length === 1 ? 'term' : 'terms'}
                       </span>
                     </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="space-y-4">
-                      {termsByLetter[letter].map((term, index) => (
-                        <div key={term.id} className={`${index > 0 ? 'border-t border-gray-200 dark:border-gray-600 pt-4' : ''}`}>
+                    <div className="p-6">
+                      <div className="grid gap-4">
+                        {termsByLetter[letter].map((term, index) => (
                           <Link
+                            key={term.id}
                             href={`/term/${term.slug || term.id}`}
-                            className="block hover:bg-gray-50 dark:hover:bg-gray-700 p-4 rounded-lg transition-colors"
+                            className="group block p-4 bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-gray-600 rounded-lg transition-all hover:shadow-md"
                           >
                             <div className="flex items-start justify-between mb-2">
-                              <h4 className="text-lg font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+                              <h4 className="text-lg font-semibold text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300">
                                 {term.name}
                               </h4>
                               <div className="flex items-center gap-2">
-                                <span className={`text-xs px-2 py-1 rounded font-medium ${
+                                <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                                   term.difficulty === 'beginner' 
-                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                    ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
                                     : term.difficulty === 'intermediate'
-                                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'
+                                    : 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
                                 }`}>
                                   {term.difficulty}
                                 </span>
-                                {term.view_count && (
-                                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                                    {term.view_count} views
+                                {term.view_count && term.view_count > 50 && (
+                                  <span className="text-xs text-orange-600 dark:text-orange-400" title="Popular term">
+                                    🔥
                                   </span>
                                 )}
                               </div>
@@ -233,74 +403,117 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                             <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-3">
                               {term.definition}
                             </p>
+                            {term.examples && term.examples.length > 0 && (
+                              <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
+                                <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                                  Example: "{term.examples[0]}"
+                                </p>
+                              </div>
+                            )}
                             {term.categories && term.categories.length > 1 && (
-                              <div className="flex items-center gap-1">
+                              <div className="flex items-center gap-1 mt-2">
                                 <span className="text-xs text-gray-500 dark:text-gray-400">Also in:</span>
                                 {term.categories
                                   .filter(cat => cat.slug !== category.slug)
-                                  .slice(0, 3)
+                                  .slice(0, 2)
                                   .map((cat, i) => (
-                                    <span key={cat.id} className="text-xs text-blue-600 dark:text-blue-400">
-                                      {i > 0 && ', '}{cat.emoji} {cat.name}
+                                    <span key={cat.id} className="text-xs bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded">
+                                      {cat.emoji} {cat.name}
                                     </span>
                                   ))}
-                                {term.categories.filter(cat => cat.slug !== category.slug).length > 3 && (
-                                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                                    +{term.categories.filter(cat => cat.slug !== category.slug).length - 3} more
-                                  </span>
-                                )}
                               </div>
                             )}
                           </Link>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center">
+              <div className="text-6xl mb-4">📝</div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                No Terms Yet
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Be the first to contribute terms to the {category.name} category!
+              </p>
+              <Link
+                href="/submit"
+                className="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+              >
+                <span className="mr-2">➕</span> Add the First Term
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Related Categories Section */}
+        {relatedCategories.length > 0 && (
+          <div className="max-w-6xl mx-auto mt-12 mb-8">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+                Explore Related Categories
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {relatedCategories.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={`/category/${cat.slug}`}
+                    className="group text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-600 transition-all hover:shadow-md"
+                  >
+                    {cat.emoji && (
+                      <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">
+                        {cat.emoji}
+                      </div>
+                    )}
+                    <div className="font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                      {cat.name}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {cat.term_count || 0} terms
+                    </div>
+                  </Link>
+                ))}
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="max-w-4xl mx-auto text-center py-12">
-            <p className="text-gray-600 dark:text-gray-300 text-lg">
-              No terms have been added to this category yet.
-            </p>
-            <Link
-              href="/submit"
-              className="inline-flex items-center px-6 py-3 mt-6 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-            >
-              Contribute
-            </Link>
+              <div className="text-center mt-6">
+                <Link
+                  href="/categories"
+                  className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  View All Categories →
+                </Link>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Footer Navigation */}
-        <div className="max-w-4xl mx-auto mt-12 text-center bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Explore More Categories
-          </h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Discover terminology from other hobbies and interests, or contribute your own knowledge.
-          </p>
-          <div className="flex justify-center gap-4 flex-wrap">
-            <Link
-              href="/categories"
-              className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-            >
-              All Categories
-            </Link>
-            <Link
-              href="/all-terms"
-              className="inline-flex items-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
-            >
-              Browse All Terms
-            </Link>
-            <Link
-              href="/admin"
-              className="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-            >
-              Contribute
-            </Link>
+        {/* Call to Action Section */}
+        <div className="max-w-4xl mx-auto mt-12">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-xl p-8 text-center text-white">
+            <h3 className="text-2xl font-bold mb-4">
+              Help Us Grow the {category.name} Dictionary
+            </h3>
+            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
+              Know a term that's not listed? Your contributions help make this the most comprehensive {' '}
+              {category.name.toLowerCase()} glossary on the web.
+            </p>
+            <div className="flex justify-center gap-4 flex-wrap">
+              <Link
+                href="/submit"
+                className="inline-flex items-center px-6 py-3 bg-white text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-semibold"
+              >
+                <span className="mr-2">✍️</span> Submit a Term
+              </Link>
+              <Link
+                href="/admin"
+                className="inline-flex items-center px-6 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition-colors font-semibold"
+              >
+                <span className="mr-2">⚙️</span> Admin Panel
+              </Link>
+            </div>
           </div>
         </div>
       </div>

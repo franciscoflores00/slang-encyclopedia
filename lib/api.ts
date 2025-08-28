@@ -1,5 +1,6 @@
 import { supabase } from './supabase'
 import { Category, Term, TermWithCategories, CategoryRelation } from '@/types'
+import { allCategories } from './all-categories'
 
 // Check if Supabase is properly configured
 const isSupabaseConfigured = () => {
@@ -12,68 +13,24 @@ const isSupabaseConfigured = () => {
 }
 
 // Mock data for when Supabase is not configured
-const mockCategories: Category[] = [
-  {
-    id: '1',
-    name: 'Cycling',
-    slug: 'cycling',
-    description: 'Terms related to cycling, bicycle racing, and bike maintenance',
-    history: 'Cycling has evolved from the first pedal-powered bicycle invented in the 1860s to become one of the world\'s most popular recreational activities and competitive sports. Modern cycling encompasses road racing, mountain biking, BMX, track cycling, and recreational riding. The sport has developed a rich vocabulary covering everything from equipment and techniques to racing strategy and bike maintenance. Professional cycling gained international prominence through events like the Tour de France (established in 1903), creating terminology that has spread throughout the global cycling community.',
-    emoji: '🚴',
-    color: '#FF6B6B',
-    term_count: 3,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  {
-    id: '2',
-    name: 'Swimming',
-    slug: 'swimming',
-    description: 'Swimming techniques, pool terminology, and aquatic sports',
-    history: 'Swimming as a competitive sport dates back to ancient civilizations, but modern competitive swimming began in the 19th century. The first swimming organization was formed in London in 1837, and swimming became part of the modern Olympic Games in 1896. The sport has developed four main competitive strokes (freestyle, backstroke, breaststroke, and butterfly) and encompasses pool swimming, open water swimming, synchronized swimming, and water polo. Swimming terminology has evolved to describe techniques, training methods, pool equipment, and race strategies used by swimmers worldwide.',
-    emoji: '🏊',
-    color: '#4ECDC4',
-    term_count: 2,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  {
-    id: '3',
-    name: 'Running',
-    slug: 'running',
-    description: 'Running, jogging, marathons, and track terminology',
-    history: 'Running is humanity\'s most fundamental form of locomotion and has been practiced for thousands of years for hunting, communication, and warfare. Modern competitive running emerged in the 19th century with organized track and field events. The marathon, inspired by the ancient Greek messenger Pheidippides, became an Olympic event in 1896. Running has since diversified into numerous disciplines including sprints, middle distance, long distance, cross country, trail running, and ultramarathons. The running boom of the 1970s popularized jogging and recreational running, creating a rich vocabulary around training methods, gear, and racing strategies.',
-    emoji: '🏃',
-    color: '#45B7D1',
-    term_count: 2,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  {
-    id: '4',
-    name: 'Basketball',
-    slug: 'basketball',
-    description: 'Basketball terminology, techniques, and gameplay',
-    history: 'Basketball was invented in 1891 by Dr. James Naismith in Springfield, Massachusetts, as a winter activity for his students. The sport quickly spread across America and internationally, becoming one of the world\'s most popular sports. Professional basketball leagues like the NBA have created a global audience and developed extensive terminology covering plays, positions, techniques, and strategies. The sport has evolved from peach baskets nailed to gymnasium balconies to high-tech arenas with shot clocks and three-point lines.',
-    emoji: '🏀',
-    color: '#FF8C42',
-    term_count: 0,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  {
-    id: '5',
-    name: 'Astronomy',
-    slug: 'astronomy',
-    description: 'Celestial observation, equipment, and astronomical phenomena',
-    history: 'Astronomy is one of humanity\'s oldest sciences, dating back to ancient civilizations that tracked celestial movements for agriculture and navigation. Modern astronomy began with telescopes in the 17th century and has expanded to include radio astronomy, space exploration, and deep space observation. Amateur astronomy has flourished alongside professional research, creating a rich vocabulary covering equipment, observing techniques, celestial objects, and astrophotography.',
-    emoji: '🔭',
-    color: '#6A4C93',
-    term_count: 0,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  }
-]
+// Convert allCategories to full Category objects with IDs and timestamps
+const mockCategories: Category[] = allCategories.map((cat, index) => ({
+  id: String(index + 1),
+  ...cat,
+  history: cat.slug === 'cycling' 
+    ? 'Cycling has evolved from the first pedal-powered bicycle invented in the 1860s to become one of the world\'s most popular recreational activities and competitive sports. Modern cycling encompasses road racing, mountain biking, BMX, track cycling, and recreational riding. The sport has developed a rich vocabulary covering everything from equipment and techniques to racing strategy and bike maintenance. Professional cycling gained international prominence through events like the Tour de France (established in 1903), creating terminology that has spread throughout the global cycling community.'
+    : cat.slug === 'swimming'
+    ? 'Swimming as a competitive sport dates back to ancient civilizations, but modern competitive swimming began in the 19th century. The first swimming organization was formed in London in 1837, and swimming became part of the modern Olympic Games in 1896. The sport has developed four main competitive strokes (freestyle, backstroke, breaststroke, and butterfly) and encompasses pool swimming, open water swimming, synchronized swimming, and water polo. Swimming terminology has evolved to describe techniques, training methods, pool equipment, and race strategies used by swimmers worldwide.'
+    : cat.slug === 'running'
+    ? 'Running is humanity\'s most fundamental form of locomotion and has been practiced for thousands of years for hunting, communication, and warfare. Modern competitive running emerged in the 19th century with organized track and field events. The marathon, inspired by the ancient Greek messenger Pheidippides, became an Olympic event in 1896. Running has since diversified into numerous disciplines including sprints, middle distance, long distance, cross country, trail running, and ultramarathons. The running boom of the 1970s popularized jogging and recreational running, creating a rich vocabulary around training methods, gear, and racing strategies.'
+    : cat.slug === 'basketball'
+    ? 'Basketball was invented in 1891 by Dr. James Naismith in Springfield, Massachusetts, as a winter activity for his students. The sport quickly spread across America and internationally, becoming one of the world\'s most popular sports. Professional basketball leagues like the NBA have created a global audience and developed extensive terminology covering plays, positions, techniques, and strategies. The sport has evolved from peach baskets nailed to gymnasium balconies to high-tech arenas with shot clocks and three-point lines.'
+    : cat.slug === 'astronomy'
+    ? 'Astronomy is one of humanity\'s oldest sciences, dating back to ancient civilizations that tracked celestial movements for agriculture and navigation. Modern astronomy began with telescopes in the 17th century and has expanded to include radio astronomy, space exploration, and deep space observation. Amateur astronomy has flourished alongside professional research, creating a rich vocabulary covering equipment, observing techniques, celestial objects, and astrophotography.'
+    : undefined,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString()
+}))
 
 const mockTerms: TermWithCategories[] = [
   {
@@ -114,24 +71,57 @@ const mockTerms: TermWithCategories[] = [
   }
 ]
 
-// Category API functions
+// Category API functions  
 export async function getAllCategories(): Promise<Category[]> {
   if (!isSupabaseConfigured()) {
     console.warn('Supabase not configured, using mock data')
-    return mockCategories
+    
+    // Calculate actual term counts for mock categories
+    const categoriesWithCounts = mockCategories.map(category => {
+      const termCount = mockTerms.filter(term => 
+        term.categories?.some(cat => cat.slug === category.slug)
+      ).length
+      
+      return {
+        ...category,
+        term_count: termCount
+      }
+    })
+    
+    return categoriesWithCounts
   }
 
-  const { data, error } = await supabase
+  // First get all categories
+  const { data: categories, error: categoriesError } = await supabase
     .from('categories')
     .select('*')
     .order('name')
 
-  if (error) {
-    console.error('Error fetching categories:', error)
+  if (categoriesError) {
+    console.error('Error fetching categories:', categoriesError)
     return []
   }
 
-  return data || []
+  if (!categories) return []
+
+  // Then get actual term counts for each category
+  const categoriesWithCounts = await Promise.all(
+    categories.map(async (category) => {
+      const { count, error: countError } = await supabase
+        .from('term_categories')
+        .select('*', { count: 'exact', head: true })
+        .eq('category_id', category.id)
+
+      if (countError) {
+        console.error(`Error counting terms for ${category.name}:`, countError)
+        return { ...category, term_count: 0 }
+      }
+
+      return { ...category, term_count: count || 0 }
+    })
+  )
+
+  return categoriesWithCounts
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
@@ -143,11 +133,16 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
     .from('categories')
     .select('*')
     .eq('slug', slug)
-    .single()
+    .maybeSingle()
 
   if (error) {
     console.error('Error fetching category:', error)
     // Fallback to mock data if category not found in database
+    return mockCategories.find(cat => cat.slug === slug) || null
+  }
+  
+  // If no data found in database, fallback to mock data
+  if (!data) {
     return mockCategories.find(cat => cat.slug === slug) || null
   }
 

@@ -27,9 +27,25 @@ export default function Header() {
           {/* Logo/Brand */}
           <Link 
             href="/" 
-            className="text-xl md:text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
           >
-            Hobbipedia
+            {/* Desktop Logo */}
+            <img 
+              src="/images/logo/hobbipedia-logo.svg" 
+              alt="Hobbipedia - Your hobby encyclopedia" 
+              className="hidden md:block h-8 w-auto"
+            />
+            {/* Mobile Logo - Icon only */}
+            <div className="md:hidden flex items-center space-x-2">
+              <img 
+                src="/images/logo/hobbipedia-icon.svg" 
+                alt="Hobbipedia" 
+                className="h-8 w-8"
+              />
+              <span className="text-xl font-bold text-blue-600">
+                Hobbipedia
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}

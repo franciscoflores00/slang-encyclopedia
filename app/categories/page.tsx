@@ -1,41 +1,68 @@
 import Link from 'next/link'
+import { getAllCategories } from '@/lib/api'
+import SearchBar from '@/components/SearchBar'
 
-// Placeholder categories organized by letter (like Investopedia's financial dictionary)
+// All categories organized by letter (including both real and placeholder ones for comprehensive display)
 const categoriesByLetter = {
-  A: ['Archery', 'Astronomy', 'Aquaculture', 'Art History', 'Automotive'],
-  B: ['Baseball', 'Basketball', 'Baking', 'Beekeeping', 'Bird Watching', 'Boxing'],
-  C: ['Cycling', 'Chess', 'Cooking', 'Cricket', 'Climbing', 'Ceramics'],
-  D: ['Dancing', 'Diving', 'Drawing', 'Drone Flying', 'Darts'],
-  E: ['Embroidery', 'Electronics', 'Equestrian', 'Esports'],
-  F: ['Football', 'Fishing', 'Fencing', 'Fashion Design', 'Filmmaking'],
-  G: ['Gaming', 'Gardening', 'Golf', 'Gymnastics', 'Guitar Playing'],
-  H: ['Hiking', 'Hockey', 'Hunting', 'Horseback Riding', 'Home Brewing'],
-  I: ['Ice Skating', 'Interior Design', 'Illustration', 'Investing'],
-  J: ['Jewelry Making', 'Judo', 'Jazz Music', 'Journalism'],
-  K: ['Kayaking', 'Knitting', 'Kite Flying', 'Karate'],
-  L: ['Literature', 'Lacrosse', 'Landscape Architecture', 'Language Learning'],
-  M: ['Mountain Biking', 'Martial Arts', 'Music Production', 'Motorcycling'],
+  A: ['3D printing', 'Abseiling', 'Acting', 'Adventure racing', 'Aerobics', 'Airsoft', 'Animation', 'Aquaculture', 'Archery', 'Art History', 'Astronomy', 'Athletics', 'Auto racing', 'Automotive'],
+  B: ['Badminton', 'Baking', 'Baseball', 'Basketball', 'Beekeeping', 'Billiards', 'Birdwatching', 'Blacksmithing', 'BMX', 'Board games', 'Boating', 'Bodyboarding', 'Botany', 'Bowling', 'Boxing', 'Brewing', 'Bungee jumping', 'Bushcraft'],
+  C: ['Calligraphy', 'Camping', 'Card games', 'Ceramics', 'Chess', 'Climbing', 'Coffee roasting', 'Coin collecting', 'Collecting', 'Composting', 'Cooking', 'Cosplay', 'Cricket', 'Cross-stitch', 'Crosswords', 'Cultural exchange', 'Curling', 'Cycling'],
+  D: ['Dance', 'Dancing', 'Darts', 'Diving', 'Drawing', 'Drone Flying', 'Drums'],
+  E: ['Electronics', 'Embroidery', 'Equestrian', 'Esports', 'Event planning'],
+  F: ['Fashion design', 'Fashion Design', 'Fencing', 'Figure skating', 'Filmmaking', 'Fishing', 'Football', 'Foraging'],
+  G: ['Gaming', 'Gardening', 'Genealogy', 'Geocaching', 'Geology', 'Glassblowing', 'Go-karting', 'Golf', 'Guitar', 'Guitar Playing', 'Gymnastics'],
+  H: ['Ham radio', 'Hiking', 'Hockey', 'Home Brewing', 'Horseback riding', 'Hunting', 'Hydroponics'],
+  I: ['Ice hockey', 'Ice Skating', 'Illustration', 'Improv', 'Interior Design', 'Investing'],
+  J: ['Jazz Music', 'Jewelry making', 'Journalism', 'Judo', 'Juggling'],
+  K: ['Karate', 'Kayaking', 'Kickboxing', 'Kite Flying', 'Knitting'],
+  L: ['Lacrosse', 'Landscape Architecture', 'Language learning', 'Leatherworking', 'Literature'],
+  M: ['Magic', 'Makeup artistry', 'Martial Arts', 'Meditation', 'Metalworking', 'Meteorology', 'Mixed martial arts', 'Model building', 'Model trains', 'Motorcycling', 'Mountain Biking', 'Mountaineering', 'Music', 'Music Production'],
   N: ['Nature Photography', 'Needlepoint', 'Numismatics', 'Nutrition'],
-  O: ['Origami', 'Orchestra', 'Outdoor Survival', 'Oil Painting'],
-  P: ['Photography', 'Pottery', 'Piano Playing', 'Parkour', 'Pilates'],
-  Q: ['Quilting', 'Quantum Physics', 'Quidditch'],
-  R: ['Rock Climbing', 'Running', 'Rugby', 'Robotics', 'Reading'],
-  S: ['Swimming', 'Skiing', 'Soccer', 'Sculpture', 'Sailing', 'Skateboarding'],
-  T: ['Tennis', 'Triathlon', 'Theater', 'Travel Photography', 'Table Tennis'],
-  U: ['Urban Exploration', 'Ukulele', 'Ultimate Frisbee'],
-  V: ['Volleyball', 'Video Editing', 'Violin', 'Viticulture'],
-  W: ['Weightlifting', 'Woodworking', 'Wrestling', 'Wine Tasting'],
+  O: ['Oil Painting', 'Orchestra', 'Orienteering', 'Origami', 'Outdoor Survival'],
+  P: ['Paragliding', 'Parkour', 'Pet training', 'Photography', 'Piano', 'Piano Playing', 'Pilates', 'Podcasting', 'Pottery', 'Programming', 'Public speaking', 'Puppetry', 'Puzzles'],
+  Q: ['Qigong', 'Quantum Physics', 'Quidditch', 'Quilting'],
+  R: ['Reading', 'Remote control', 'Robotics', 'Rock climbing', 'Rugby', 'Running'],
+  S: ['Sailing', 'Sculpture', 'Scuba diving', 'Sewing', 'Shooting', 'Skateboarding', 'Skiing', 'Skydiving', 'Snorkeling', 'Snowboarding', 'Soccer', 'Stamp collecting', 'Stand-up comedy', 'Sudoku', 'Surfing', 'Survival skills', 'Swimming'],
+  T: ['Table tennis', 'Tai chi', 'Tennis', 'Theater', 'Travel Photography', 'Triathlon', 'Trivia'],
+  U: ['Ultimate Frisbee', 'Ukulele', 'Urban Exploration'],
+  V: ['Video editing', 'Video games', 'Violin', 'Viticulture', 'Volleyball', 'Volunteering'],
+  W: ['Water skiing', 'Web design', 'Weightlifting', 'Wine tasting', 'Wine Tasting', 'Woodworking', 'Wrestling', 'Writing'],
   X: ['Xerography', 'Xtreme Sports'],
-  Y: ['Yoga', 'Yachting', 'Youth Coaching'],
-  Z: ['Zoology', 'Zumba', 'Zero Waste Living']
+  Y: ['Yachting', 'Yoga', 'Youth Coaching'],
+  Z: ['Zero Waste Living', 'Zoology', 'Zumba']
 }
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
   const letters = Object.keys(categoriesByLetter).sort()
+  
+  // Get real categories to check which ones have actual pages and get term counts
+  const realCategories = await getAllCategories()
+  const realCategorySlugs = new Set(realCategories.map(cat => cat.slug))
+  
+  // Create a map of slug to term count for quick lookup
+  const termCountMap = new Map(realCategories.map(cat => [cat.slug, cat.term_count || 0]))
+  
+  // Helper function to convert name to slug
+  const nameToSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-')
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8">
+        {/* Breadcrumb Navigation */}
+        <nav className="mb-6">
+          <Link href="/" className="text-blue-600 hover:text-blue-700 mr-2">
+            Home
+          </Link>
+          <span className="text-gray-400 mr-2">/</span>
+          <span className="text-gray-600 dark:text-gray-300">Categories</span>
+        </nav>
+
+        {/* Search Bar */}
+        <div className="max-w-2xl mx-auto mb-8">
+          <SearchBar />
+        </div>
+
+        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
             Hobbies & Interests Dictionary
@@ -73,15 +100,30 @@ export default function CategoriesPage() {
                 </div>
                 <div className="p-6">
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                    {categoriesByLetter[letter as keyof typeof categoriesByLetter].map((category) => (
-                      <Link
-                        key={category}
-                        href={`/category/${category.toLowerCase().replace(/\s+/g, '-')}`}
-                        className="block p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors border border-gray-200 dark:border-gray-600"
-                      >
-                        <span className="text-sm font-medium">{category}</span>
-                      </Link>
-                    ))}
+                    {categoriesByLetter[letter as keyof typeof categoriesByLetter].map((category) => {
+                      const slug = nameToSlug(category)
+                      const hasRealPage = realCategorySlugs.has(slug)
+                      const termCount = termCountMap.get(slug) || 0
+                      
+                      return (
+                        <Link
+                          key={category}
+                          href={`/category/${slug}`}
+                          className={`block p-3 rounded-lg transition-colors border ${
+                            hasRealPage
+                              ? 'bg-gray-50 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 border-gray-200 dark:border-gray-600'
+                              : 'bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-500 cursor-default'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">{category}</span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 ml-2">
+                              {hasRealPage ? termCount : '0'}
+                            </span>
+                          </div>
+                        </Link>
+                      )
+                    })}
                   </div>
                 </div>
               </div>
