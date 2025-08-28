@@ -18,6 +18,7 @@ const mockCategories: Category[] = [
     name: 'Cycling',
     slug: 'cycling',
     description: 'Terms related to cycling, bicycle racing, and bike maintenance',
+    history: 'Cycling has evolved from the first pedal-powered bicycle invented in the 1860s to become one of the world\'s most popular recreational activities and competitive sports. Modern cycling encompasses road racing, mountain biking, BMX, track cycling, and recreational riding. The sport has developed a rich vocabulary covering everything from equipment and techniques to racing strategy and bike maintenance. Professional cycling gained international prominence through events like the Tour de France (established in 1903), creating terminology that has spread throughout the global cycling community.',
     emoji: '🚴',
     color: '#FF6B6B',
     term_count: 3,
@@ -29,6 +30,7 @@ const mockCategories: Category[] = [
     name: 'Swimming',
     slug: 'swimming',
     description: 'Swimming techniques, pool terminology, and aquatic sports',
+    history: 'Swimming as a competitive sport dates back to ancient civilizations, but modern competitive swimming began in the 19th century. The first swimming organization was formed in London in 1837, and swimming became part of the modern Olympic Games in 1896. The sport has developed four main competitive strokes (freestyle, backstroke, breaststroke, and butterfly) and encompasses pool swimming, open water swimming, synchronized swimming, and water polo. Swimming terminology has evolved to describe techniques, training methods, pool equipment, and race strategies used by swimmers worldwide.',
     emoji: '🏊',
     color: '#4ECDC4',
     term_count: 2,
@@ -40,9 +42,34 @@ const mockCategories: Category[] = [
     name: 'Running',
     slug: 'running',
     description: 'Running, jogging, marathons, and track terminology',
+    history: 'Running is humanity\'s most fundamental form of locomotion and has been practiced for thousands of years for hunting, communication, and warfare. Modern competitive running emerged in the 19th century with organized track and field events. The marathon, inspired by the ancient Greek messenger Pheidippides, became an Olympic event in 1896. Running has since diversified into numerous disciplines including sprints, middle distance, long distance, cross country, trail running, and ultramarathons. The running boom of the 1970s popularized jogging and recreational running, creating a rich vocabulary around training methods, gear, and racing strategies.',
     emoji: '🏃',
     color: '#45B7D1',
     term_count: 2,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: '4',
+    name: 'Basketball',
+    slug: 'basketball',
+    description: 'Basketball terminology, techniques, and gameplay',
+    history: 'Basketball was invented in 1891 by Dr. James Naismith in Springfield, Massachusetts, as a winter activity for his students. The sport quickly spread across America and internationally, becoming one of the world\'s most popular sports. Professional basketball leagues like the NBA have created a global audience and developed extensive terminology covering plays, positions, techniques, and strategies. The sport has evolved from peach baskets nailed to gymnasium balconies to high-tech arenas with shot clocks and three-point lines.',
+    emoji: '🏀',
+    color: '#FF8C42',
+    term_count: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: '5',
+    name: 'Astronomy',
+    slug: 'astronomy',
+    description: 'Celestial observation, equipment, and astronomical phenomena',
+    history: 'Astronomy is one of humanity\'s oldest sciences, dating back to ancient civilizations that tracked celestial movements for agriculture and navigation. Modern astronomy began with telescopes in the 17th century and has expanded to include radio astronomy, space exploration, and deep space observation. Amateur astronomy has flourished alongside professional research, creating a rich vocabulary covering equipment, observing techniques, celestial objects, and astrophotography.',
+    emoji: '🔭',
+    color: '#6A4C93',
+    term_count: 0,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   }
@@ -52,12 +79,14 @@ const mockTerms: TermWithCategories[] = [
   {
     id: '1',
     name: 'Bonk',
+    slug: 'bonk',
     definition: 'The sudden loss of energy experienced during long endurance activities due to glycogen depletion.',
     difficulty: 'beginner',
     examples: ['I bonked at mile 60 of the century ride', 'Make sure to eat regularly to avoid bonking'],
     etymology: 'Originally from boxing, meaning to hit or strike',
     pronunciation: undefined,
     usage_notes: 'Common in cycling and running communities. Prevented by proper nutrition during activity.',
+    view_count: 152,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     categories: [
@@ -68,12 +97,14 @@ const mockTerms: TermWithCategories[] = [
   {
     id: '2',
     name: 'Cadence',
+    slug: 'cadence',
     definition: 'The rhythm or rate of movement, measured differently across various activities.',
     difficulty: 'intermediate',
     examples: ['Maintain a steady cadence of 90 RPM', 'Her running cadence was 180 steps per minute'],
     etymology: 'From Latin "cadentia" meaning falling or rhythm',
     pronunciation: undefined,
     usage_notes: 'In cycling: pedal revolutions per minute. In running: steps per minute.',
+    view_count: 89,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     categories: [
@@ -116,7 +147,8 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
 
   if (error) {
     console.error('Error fetching category:', error)
-    return null
+    // Fallback to mock data if category not found in database
+    return mockCategories.find(cat => cat.slug === slug) || null
   }
 
   return data
@@ -133,6 +165,16 @@ export async function getTermsByCategorySlug(slug: string): Promise<TermWithCate
   // First get the category
   const category = await getCategoryBySlug(slug)
   if (!category) return []
+
+  // Check if this is a mock category (not in database)
+  const isMockCategory = mockCategories.some(mockCat => mockCat.id === category.id)
+  
+  if (isMockCategory) {
+    // For mock categories, return mock terms
+    return mockTerms.filter(term => 
+      term.categories?.some(cat => cat.slug === slug)
+    )
+  }
 
   // Get all terms for this category with their category relationships
   const { data, error } = await supabase
@@ -154,7 +196,10 @@ export async function getTermsByCategorySlug(slug: string): Promise<TermWithCate
 
   if (error) {
     console.error('Error fetching terms:', error)
-    return []
+    // Fallback to mock data if terms not found in database
+    return mockTerms.filter(term => 
+      term.categories?.some(cat => cat.slug === slug)
+    )
   }
 
   // Transform the data to match our TermWithCategories type
@@ -208,7 +253,7 @@ export async function getTermById(id: string): Promise<TermWithCategories | null
           emoji
         )
       ),
-      term_relations(
+      term_relations!term_relations_term_id_fkey(
         related_term:terms!term_relations_related_term_id_fkey(
           id,
           name,
@@ -668,6 +713,113 @@ export async function getSimilarTerms(termId: string, categoryIds: string[], lim
   return Array.from(uniqueTerms.values()).slice(0, limit)
 }
 
+// Get term by slug (with fallback to ID)
+export async function getTermBySlug(slug: string): Promise<TermWithCategories | null> {
+  if (!isSupabaseConfigured()) {
+    // Find by slug for mock data
+    return mockTerms.find(term => 
+      term.slug === slug || 
+      term.name.toLowerCase().replace(/\s+/g, '-') === slug.toLowerCase()
+    ) || null
+  }
+
+  // Try to fetch by slug first
+  let { data, error } = await supabase
+    .from('terms')
+    .select(`
+      *,
+      term_categories(
+        is_primary,
+        category:categories(
+          id,
+          name,
+          slug,
+          emoji
+        )
+      ),
+      term_relations!term_relations_term_id_fkey(
+        related_term:terms!term_relations_related_term_id_fkey(
+          id,
+          name,
+          slug,
+          definition,
+          difficulty
+        )
+      )
+    `)
+    .eq('slug', slug)
+    .maybeSingle()
+
+  // If not found by slug and slug looks like a UUID, try by ID
+  if (!data && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug)) {
+    const result = await supabase
+      .from('terms')
+      .select(`
+        *,
+        term_categories(
+          is_primary,
+          category:categories(
+            id,
+            name,
+            slug,
+            emoji
+          )
+        ),
+        term_relations!term_relations_term_id_fkey(
+          related_term:terms!term_relations_related_term_id_fkey(
+            id,
+            name,
+            slug,
+            definition,
+            difficulty
+          )
+        )
+      `)
+      .eq('id', slug)
+      .maybeSingle()
+    
+    data = result.data
+    error = result.error
+  }
+
+  if (error) {
+    console.error('Error fetching term:', error)
+    return null
+  }
+
+  if (!data) {
+    return null
+  }
+
+  // Transform the data
+  const categories: CategoryRelation[] = data.term_categories?.map((tc: any) => ({
+    id: tc.category.id,
+    name: tc.category.name,
+    slug: tc.category.slug,
+    emoji: tc.category.emoji,
+    is_primary: tc.is_primary
+  })) || []
+
+  const related_terms: Term[] = data.term_relations?.map((tr: any) => tr.related_term) || []
+
+  return {
+    id: data.id,
+    name: data.name,
+    slug: data.slug,
+    definition: data.definition,
+    difficulty: data.difficulty,
+    examples: data.examples,
+    etymology: data.etymology,
+    pronunciation: data.pronunciation,
+    usage_notes: data.usage_notes,
+    view_count: data.view_count,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+    categories,
+    related_terms
+  }
+}
+
 // Increment view count for a term
 export async function incrementViewCount(termId: string): Promise<void> {
   if (!isSupabaseConfigured()) {
@@ -677,12 +829,32 @@ export async function incrementViewCount(termId: string): Promise<void> {
   }
 
   try {
-    const { error } = await supabase.rpc('increment_view_count', { term_id: termId })
+    // Get the current term to check its view count
+    const { data: currentTerm, error: fetchError } = await supabase
+      .from('terms')
+      .select('view_count')
+      .eq('id', termId)
+      .single()
+
+    if (fetchError || !currentTerm) {
+      console.error('Error fetching current term for view count:', fetchError)
+      return
+    }
+
+    // Increment the view count
+    const newViewCount = (currentTerm.view_count || 0) + 1
+    const { error: updateError } = await supabase
+      .from('terms')
+      .update({ 
+        view_count: newViewCount,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', termId)
     
-    if (error) {
-      console.error('Error incrementing view count:', error)
+    if (updateError) {
+      console.error('Error incrementing view count:', updateError)
     }
   } catch (error) {
-    console.error('Error calling increment_view_count:', error)
+    console.error('Error in incrementViewCount:', error)
   }
 }

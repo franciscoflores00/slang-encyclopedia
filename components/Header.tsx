@@ -1,10 +1,24 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [browseDropdownOpen, setBrowseDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setBrowseDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
@@ -26,17 +40,48 @@ export default function Header() {
             >
               About
             </Link>
+            
+            {/* Browse Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setBrowseDropdownOpen(!browseDropdownOpen)}
+                onMouseEnter={() => setBrowseDropdownOpen(true)}
+                className="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+              >
+                Browse
+                <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {browseDropdownOpen && (
+                <div
+                  onMouseLeave={() => setBrowseDropdownOpen(false)}
+                  className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50"
+                >
+                  <Link
+                    href="/"
+                    className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-t-lg"
+                    onClick={() => setBrowseDropdownOpen(false)}
+                  >
+                    Terms
+                  </Link>
+                  <Link
+                    href="/categories"
+                    className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-b-lg"
+                    onClick={() => setBrowseDropdownOpen(false)}
+                  >
+                    Categories
+                  </Link>
+                </div>
+              )}
+            </div>
+            
             <Link 
-              href="/" 
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+              href="/submit" 
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
             >
-              Browse Terms
-            </Link>
-            <Link 
-              href="/categories" 
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
-            >
-              Categories
+              Contribute
             </Link>
           </nav>
 
@@ -81,11 +126,11 @@ export default function Header() {
               Categories
             </Link>
             <Link 
-              href="/admin" 
+              href="/submit" 
               onClick={() => setMobileMenuOpen(false)}
               className="block py-3 px-4 mt-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-colors"
             >
-              Submit a Term
+              Contribute
             </Link>
           </nav>
         )}

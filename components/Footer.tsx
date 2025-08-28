@@ -69,13 +69,7 @@ export default function Footer() {
                   href="/all-terms" 
                   className="block text-gray-300 hover:text-white transition-colors"
                 >
-                  All Terms
-                </Link>
-                <Link 
-                  href="/popular" 
-                  className="block text-gray-300 hover:text-white transition-colors"
-                >
-                  Popular Terms
+                  Terms
                 </Link>
               </div>
             </div>
@@ -93,7 +87,7 @@ export default function Footer() {
                   href="/admin" 
                   className="block text-gray-300 hover:text-white transition-colors"
                 >
-                  Submit a Term
+                  Contribute
                 </Link>
               </div>
             </div>

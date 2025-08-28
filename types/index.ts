@@ -3,6 +3,7 @@ export interface Category {
   name: string
   slug: string
   description?: string
+  history?: string // Detailed background/history of the hobby/sport/activity
   emoji?: string
   color?: string
   term_count: number
@@ -13,12 +14,14 @@ export interface Category {
 export interface Term {
   id: string
   name: string
+  slug?: string
   definition: string
   difficulty: 'beginner' | 'intermediate' | 'advanced'
   examples?: string[]
   etymology?: string
   pronunciation?: string
   usage_notes?: string
+  view_count?: number
   created_at: string
   updated_at: string
   categories?: CategoryRelation[] // Categories this term belongs to

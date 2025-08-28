@@ -27,14 +27,14 @@ export default async function Home() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
             <div className="text-center mb-3">
               <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Browse by Letter
+                Browse Categories
               </span>
             </div>
             <div className="flex w-full">
               {Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ').map((letter) => (
                 <Link
                   key={letter}
-                  href={`/browse/${letter.toLowerCase()}`}
+                  href="/categories"
                   className="flex-1 flex items-center justify-center h-10 text-base font-semibold text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
                 >
                   {letter}
@@ -146,19 +146,19 @@ export default async function Home() {
               href="/categories"
               className="inline-flex items-center justify-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
             >
-              Search All Categories
+              Browse Categories
             </Link>
             <Link
-              href="/search"
+              href="/all-terms"
               className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
             >
-              Search All Terms
+              Browse Terms
             </Link>
             <Link
               href="/admin"
               className="inline-flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
             >
-              Submit a Term
+              Contribute
             </Link>
           </div>
           
