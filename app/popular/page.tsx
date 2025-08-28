@@ -218,7 +218,7 @@ export default function PopularTermsPage() {
                     </span>
                   </div>
                   <div className={`flex items-center text-xs ${term.weeklyGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    <span>{term.weeklyGrowth >= 0 ? '↑' : '↓'}</span>
+                    <span>{term.weeklyGrowth >= 0 ? '\u2191' : '\u2193'}</span>
                     <span className="ml-1">{Math.abs(term.weeklyGrowth)}%</span>
                   </div>
                 </div>
@@ -294,7 +294,7 @@ export default function PopularTermsPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className={`flex items-center font-semibold ${term.weeklyGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          <span>{term.weeklyGrowth >= 0 ? '↑' : '↓'}</span>
+                          <span>{term.weeklyGrowth >= 0 ? '\u2191' : '\u2193'}</span>
                           <span className="ml-1">{Math.abs(term.weeklyGrowth)}%</span>
                         </div>
                       </td>
