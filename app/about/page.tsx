@@ -19,7 +19,7 @@ export default function AboutPage() {
               </h2>
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                 Hobbipedia exists to bridge the knowledge gap in hobby and interest communities. 
-                Whether you're new to cycling, diving into photography, or exploring rock climbing, 
+                Whether you&apos;re new to cycling, diving into photography, or exploring rock climbing, 
                 we provide clear, comprehensive definitions of specialized terminology to help you 
                 communicate confidently and learn more effectively.
               </p>
@@ -88,7 +88,7 @@ export default function AboutPage() {
               are accurate, practical, and reflect real-world usage.
             </p>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              Whether you're looking to understand a term you've encountered or want to contribute 
+              Whether you&apos;re looking to understand a term you&apos;ve encountered or want to contribute 
               your expertise, Hobbipedia welcomes learners and experts at every level.
             </p>
           </div>

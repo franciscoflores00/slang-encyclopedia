@@ -134,7 +134,7 @@ export default async function CategoriesPage() {
         {/* Footer CTA */}
         <div className="max-w-4xl mx-auto mt-12 text-center bg-gray-50 dark:bg-gray-800 rounded-lg p-8">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Don't see your hobby or interest?
+            Don&apos;t see your hobby or interest?
           </h3>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             Hobbipedia is constantly growing. Help us expand our collection by suggesting 

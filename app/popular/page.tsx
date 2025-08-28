@@ -312,7 +312,7 @@ export default function PopularTermsPage() {
             Discover More Terms
           </h3>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Explore all terms or see what's been added recently to our dictionary.
+            Explore all terms or see what&apos;s been added recently to our dictionary.
           </p>
           <div className="flex justify-center gap-4">
             <Link

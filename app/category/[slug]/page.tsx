@@ -406,7 +406,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                             {term.examples && term.examples.length > 0 && (
                               <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
                                 <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-                                  Example: "{term.examples[0]}"
+                                  Example: &quot;{term.examples[0]}&quot;
                                 </p>
                               </div>
                             )}
@@ -497,7 +497,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               Help Us Grow the {category.name} Dictionary
             </h3>
             <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              Know a term that's not listed? Your contributions help make this the most comprehensive {' '}
+              Know a term that&apos;s not listed? Your contributions help make this the most comprehensive {' '}
               {category.name.toLowerCase()} glossary on the web.
             </p>
             <div className="flex justify-center gap-4 flex-wrap">

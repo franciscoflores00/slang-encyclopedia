@@ -40,7 +40,7 @@ export default async function BrowsePage({ params }: BrowsePageProps) {
 
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Terms Starting with "{displayLetter}"
+            Terms Starting with &quot;{displayLetter}&quot;
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300">
             {terms.length} term{terms.length !== 1 ? 's' : ''} found
@@ -75,7 +75,7 @@ export default async function BrowsePage({ params }: BrowsePageProps) {
               No terms found
             </h3>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              No terms starting with "{displayLetter}" have been added yet.
+              No terms starting with &quot;{displayLetter}&quot; have been added yet.
             </p>
             <Link
               href="/"
@@ -130,7 +130,7 @@ export default async function BrowsePage({ params }: BrowsePageProps) {
                   <div className="mb-4">
                     <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2 text-sm">Example:</h4>
                     <p className="text-gray-600 dark:text-gray-400 text-sm italic">
-                      "{term.examples[0]}"
+                      &quot;{term.examples[0]}&quot;
                     </p>
                   </div>
                 )}

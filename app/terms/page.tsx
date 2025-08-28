@@ -64,7 +64,7 @@ export default function TermsPage() {
                   </h2>
                 </div>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  The information on Hobbipedia is provided on an 'as is' basis. We make no 
+                  The information on Hobbipedia is provided on an &apos;as is&apos; basis. We make no 
                   warranties, expressed or implied, and hereby disclaim all other warranties 
                   including implied warranties of merchantability or fitness for a particular purpose.
                 </p>

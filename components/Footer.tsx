@@ -99,7 +99,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
             <p>© 2024 Hobbipedia. All rights reserved.</p>
             <p className="mt-2 md:mt-0">
-              Building the world's most comprehensive hobby dictionary
+              Building the world&apos;s most comprehensive hobby dictionary
             </p>
           </div>
         </div>

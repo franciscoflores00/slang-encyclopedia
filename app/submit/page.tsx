@@ -14,7 +14,7 @@ export default function SubmitPage() {
                 Help Build Hobbipedia
               </h2>
               <p className="text-gray-600 dark:text-gray-300">
-                Know a term that's missing? Share your expertise and help others learn!
+                Know a term that&apos;s missing? Share your expertise and help others learn!
               </p>
             </div>
 
@@ -23,7 +23,7 @@ export default function SubmitPage() {
                 🚧 Coming Soon!
               </h3>
               <p className="text-blue-800 dark:text-blue-300 text-sm leading-relaxed">
-                We're currently building our term submission system. In the meantime, 
+                We&apos;re currently building our term submission system. In the meantime, 
                 you can contribute by emailing us directly with your suggested terms, 
                 definitions, and examples.
               </p>
@@ -48,7 +48,7 @@ export default function SubmitPage() {
                 <li>• <strong>Term name:</strong> The word or phrase</li>
                 <li>• <strong>Definition:</strong> Clear, concise explanation</li>
                 <li>• <strong>Category:</strong> Which hobby/sport it belongs to</li>
-                <li>• <strong>Examples:</strong> How it's used in context</li>
+                <li>• <strong>Examples:</strong> How it&apos;s used in context</li>
                 <li>• <strong>Difficulty level:</strong> Beginner, intermediate, or advanced</li>
                 <li>• <strong>Your expertise:</strong> Brief note about your background</li>
               </ul>

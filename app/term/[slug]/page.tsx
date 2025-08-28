@@ -114,7 +114,7 @@ export default async function TermPage({ params }: TermPageProps) {
                   <li key={index} className="flex items-start">
                     <span className="text-blue-600 dark:text-blue-400 mr-3 mt-1 text-lg">•</span>
                     <span className="text-gray-700 dark:text-gray-300 italic text-lg">
-                      "{example}"
+                      &quot;{example}&quot;
                     </span>
                   </li>
                 ))}

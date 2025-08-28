@@ -19,7 +19,7 @@ export default function ContactPage() {
                 Get in Touch
               </h2>
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                Have a question, suggestion, or want to contribute to Hobbipedia? We'd love to hear from you!
+                Have a question, suggestion, or want to contribute to Hobbipedia? We&apos;d love to hear from you!
               </p>
             </div>
 
