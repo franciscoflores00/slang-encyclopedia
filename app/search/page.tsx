@@ -1,15 +1,13 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import SearchBar from '@/components/SearchBar'
 import { searchTerms, getAllCategories } from '@/lib/api'
 import { TermWithCategories, Category } from '@/types'
 import Link from 'next/link'
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams()
   const [results, setResults] = useState<TermWithCategories[]>([])
   const [filteredResults, setFilteredResults] = useState<TermWithCategories[]>([])
@@ -378,5 +376,22 @@ export default function SearchPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-pulse">
+            <div className="h-8 w-48 bg-gray-200 dark:bg-gray-700 rounded mb-4 mx-auto"></div>
+            <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded mx-auto"></div>
+          </div>
+        </div>
+      </div>
+    }>
+      <SearchPageContent />
+    </Suspense>
   )
 }
