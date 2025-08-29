@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-800 dark:bg-gray-900 text-white border-t border-gray-700">
+    <footer className="bg-gray-700 dark:bg-gray-800 text-white border-t border-gray-600">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-6 lg:space-y-0">
           {/* Left side - Site title */}
@@ -95,7 +95,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom border */}
-        <div className="mt-8 pt-6 border-t border-gray-700">
+        <div className="mt-8 pt-6 border-t border-gray-600">
           <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
             <p>© 2024 Hobbipedia. All rights reserved.</p>
             <p className="mt-2 md:mt-0">

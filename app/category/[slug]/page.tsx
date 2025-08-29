@@ -135,9 +135,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               <div className="absolute inset-0 bg-black opacity-20"></div>
               <div className="relative h-full flex items-center justify-center">
                 <div className="text-center">
-                  {category.emoji && (
-                    <div className="text-6xl mb-3 animate-bounce">{category.emoji}</div>
-                  )}
                   <h1 className="text-4xl font-bold text-white drop-shadow-lg">
                     {category.name}
                   </h1>

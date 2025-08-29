@@ -16,6 +16,6 @@
   
   <!-- Typography -->
   <text x="58" y="35" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="#1f2937">
-    <tspan fill="#2563eb">Hobbi</tspan><tspan fill="#1f2937">pedia</tspan>
+    <tspan fill="#2563eb">Hobbi</tspan><tspan fill="#ffffff">pedia</tspan>
   </text>
 </svg>
