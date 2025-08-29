@@ -689,8 +689,11 @@ export async function getSimilarTerms(termId: string, categoryIds: string[], lim
   // Deduplicate and transform
   const uniqueTerms = new Map()
   data?.forEach(item => {
-    if (item.term && !uniqueTerms.has(item.term.id)) {
-      const categories: CategoryRelation[] = item.term.term_categories?.map((tc: any) => ({
+    // Handle case where term might be an array (Supabase sometimes returns arrays for relations)
+    const termData = Array.isArray(item.term) ? item.term[0] : item.term
+    
+    if (termData && !uniqueTerms.has(termData.id)) {
+      const categories: CategoryRelation[] = termData.term_categories?.map((tc: any) => ({
         id: tc.category.id,
         name: tc.category.name,
         slug: tc.category.slug,
@@ -698,8 +701,8 @@ export async function getSimilarTerms(termId: string, categoryIds: string[], lim
         is_primary: tc.is_primary
       })) || []
 
-      uniqueTerms.set(item.term.id, {
-        ...item.term,
+      uniqueTerms.set(termData.id, {
+        ...termData,
         categories
       })
     }
