@@ -1,15 +1,9 @@
-import SearchBar from '@/components/SearchBar'
-import Link from 'next/link'
-import { getTrendingTerms, getTermOfTheDay } from '@/lib/api'
-
-export default async function Home() {
-  // const trendingTerms = await getTrendingTerms(6)
-  // const termOfDay = await getTermOfTheDay()
-
+export default function Home() {
   return (
-    <div>
-      <h1>Site is working!</h1>
-      <p>Database connection will be restored shortly.</p>
+    <div style={{ padding: '20px' }}>
+      <h1>Test Page</h1>
+      <p>If you see this, the site infrastructure works.</p>
+      <p>The 404 was caused by database calls failing.</p>
     </div>
   );
 }
