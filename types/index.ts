@@ -22,6 +22,7 @@ export interface Term {
   pronunciation?: string
   usage_notes?: string
   view_count?: number
+  trending_score?: number // Percentage increase in views/popularity
   created_at: string
   updated_at: string
   categories?: CategoryRelation[] // Categories this term belongs to
