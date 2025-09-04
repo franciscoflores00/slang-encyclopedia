@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="350" height="50" viewBox="0 0 350 50" xmlns="http://www.w3.org/2000/svg">
+  <!-- Puzzle piece icon -->
+  <g>
+    <!-- Main puzzle piece body -->
+    <path d="M10 15 L25 15 C27 15 29 17 29 19 C29 21 27 23 25 23 L22 23 L22 27 C22 29 24 31 26 31 C28 31 30 29 30 27 L30 35 L10 35 Z" 
+          fill="#2563eb"/>
+    <!-- Second puzzle piece -->
+    <path d="M30 20 L40 20 L40 35 L35 35 C33 35 31 33 31 31 C31 29 33 27 35 27 L35 23 C35 21 33 19 31 19 C29 19 27 21 27 23 L27 20 Z" 
+          fill="#10b981" opacity="0.8"/>
+    <!-- Highlight on main piece -->
+    <ellipse cx="18" cy="25" rx="3" ry="5" fill="white" opacity="0.3"/>
+  </g>
+  
+  <!-- Typography -->
+  <text x="58" y="35" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="#1f2937">
+    <tspan fill="#2563eb">Hobbi</tspan><tspan fill="#ffffff">pedia</tspan>
+  </text>
+</svg>

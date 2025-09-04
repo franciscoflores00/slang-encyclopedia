@@ -1,0 +1,4 @@
+-- Update swimming category description
+UPDATE categories 
+SET description = 'Swimming is a versatile and rewarding hobby that provides a full-body workout, improves cardiovascular fitness, and can be enjoyed by people of all ages and skill levels. Whether you''re looking to improve your fitness, compete in races, or simply enjoy the feeling of being in the water, swimming has something to offer. Swimming is a great way to stay active, relieve stress, and make new friends. Whether you prefer the tranquility of a quiet lake or the excitement of a crowded pool, swimming can be enjoyed in a variety of settings. If you''re looking for a fun, low-impact hobby that can improve your overall health and well-being, swimming is the perfect choice. It is a lifelong skill that can be enjoyed by people of all ages, and can be a great way to stay active, healthy and happy.'
+WHERE slug = 'swimming';

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="350" height="50" viewBox="0 0 350 50" xmlns="http://www.w3.org/2000/svg">
+  <!-- Abstract geometric icon -->
+  <g>
+    <!-- Main hexagon -->
+    <polygon points="25,10 35,17 35,27 25,34 15,27 15,17" fill="#2563eb"/>
+    <!-- Inner triangle -->
+    <polygon points="25,16 31,24 19,24" fill="#10b981"/>
+    <!-- Small accent shapes -->
+    <circle cx="25" cy="22" r="2" fill="white" opacity="0.9"/>
+    <!-- Floating geometric elements -->
+    <rect x="38" y="15" width="4" height="4" rx="1" fill="#f59e0b" transform="rotate(45 40 17)"/>
+    <circle cx="12" cy="18" r="2" fill="#ef4444" opacity="0.8"/>
+    <polygon points="40,30 42,32 40,34 38,32" fill="#8b5cf6"/>
+  </g>
+  
+  <!-- Typography -->
+  <text x="58" y="35" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="#1f2937">
+    <tspan fill="#2563eb">Hobbi</tspan><tspan fill="#ffffff">pedia</tspan>
+  </text>
+</svg>

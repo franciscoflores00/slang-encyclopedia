@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="350" height="50" viewBox="0 0 350 50" xmlns="http://www.w3.org/2000/svg">
+  <!-- Text-only logo -->
+  <text x="20" y="32" font-family="system-ui, -apple-system, sans-serif" font-size="36" font-weight="600" fill="#111827" dominant-baseline="middle">
+    <tspan fill="#111827">Hobbi</tspan><tspan fill="#111827">pedia</tspan>
+  </text>
+</svg>

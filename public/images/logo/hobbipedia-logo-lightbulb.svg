@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="350" height="50" viewBox="0 0 350 50" xmlns="http://www.w3.org/2000/svg">
+  <!-- Light bulb icon -->
+  <g>
+    <!-- Bulb shape -->
+    <ellipse cx="25" cy="20" rx="10" ry="12" fill="#2563eb"/>
+    <!-- Bulb base/screw threads -->
+    <rect x="20" y="30" width="10" height="6" rx="1" fill="#6b7280"/>
+    <line x1="20" y1="32" x2="30" y2="32" stroke="white" stroke-width="0.5"/>
+    <line x1="20" y1="34" x2="30" y2="34" stroke="white" stroke-width="0.5"/>
+    <!-- Bulb highlight -->
+    <ellipse cx="22" cy="17" rx="3" ry="4" fill="white" opacity="0.4"/>
+    <!-- Light rays -->
+    <g stroke="#fbbf24" stroke-width="2" stroke-linecap="round">
+      <line x1="10" y1="15" x2="12" y2="17"/>
+      <line x1="8" y1="25" x2="12" y2="25"/>
+      <line x1="10" y1="35" x2="12" y2="33"/>
+      <line x1="40" y1="15" x2="38" y2="17"/>
+      <line x1="42" y1="25" x2="38" y2="25"/>
+      <line x1="40" y1="35" x2="38" y2="33"/>
+    </g>
+  </g>
+  
+  <!-- Typography -->
+  <text x="58" y="35" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="#1f2937">
+    <tspan fill="#2563eb">Hobbi</tspan><tspan fill="#ffffff">pedia</tspan>
+  </text>
+</svg>

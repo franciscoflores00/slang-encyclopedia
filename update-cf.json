@@ -1,0 +1,13 @@
+{
+  "Aliases": {
+    "Items": ["www.hobbipedia.com"],
+    "Quantity": 1
+  },
+  "ViewerCertificate": {
+    "ACMCertificateArn": "arn:aws:acm:us-east-1:853167153193:certificate/13638e95-3c3c-49dd-a234-cd7a19df1a57",
+    "SSLSupportMethod": "sni-only",
+    "MinimumProtocolVersion": "TLSv1.2_2021",
+    "Certificate": "arn:aws:acm:us-east-1:853167153193:certificate/13638e95-3c3c-49dd-a234-cd7a19df1a57",
+    "CertificateSource": "acm"
+  }
+}
